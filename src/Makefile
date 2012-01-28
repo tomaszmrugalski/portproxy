@@ -1,5 +1,5 @@
 
-OBJECTS = lowlevel-linux.o libnetlink.o ll_map.o utils.o framework.o
+OBJECTS = lowlevel-linux.o libnetlink.o framework.o
 
 HEADERS = Portable.h
 

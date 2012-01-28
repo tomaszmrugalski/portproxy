@@ -99,7 +99,6 @@ int store_nlmsg(const struct sockaddr_nl *who, struct nlmsghdr *n, void *arg)
     for (lp = linfo; *lp; lp = &(*lp)->next) /* NOTHING */;
     *lp = h;
     
-    ll_remember_index(who, n, NULL);
     return 0;
 }
 

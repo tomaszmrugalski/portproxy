@@ -451,6 +451,8 @@ int rtnl_from_file(FILE *rtnl, rtnl_filter_t handler,
 		type= h->nlmsg_type;
 		l = len - sizeof(*h);
 
+                type = type; /* avoid warning about unused value */
+
 		if (l<0 || len>sizeof(buf)) {
 			fprintf(stderr, "!!!malformed message: len=%d @%lu\n",
 				len, ftell(rtnl));
