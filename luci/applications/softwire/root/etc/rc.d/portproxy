@@ -1,0 +1,103 @@
+#!/bin/sh /etc/rc.common
+# (C) 2008 openwrt.org
+
+START=60
+
+PORTPROXY=/usr/sbin/portproxy
+
+portproxy() {
+
+# supported modes
+    local natpmp
+    local natpmpext
+    local upnpudp
+    local upnptcp
+    
+# extended NAT-PMP mode
+    local aftripv6
+    local wanipv6
+    
+# NAT-PMP and UPnP
+    local lanipv4
+    local wanipv4
+    local aftripv4
+    local laniface
+    local waniface
+
+    local params
+
+    params="-g "
+    
+    config_get natpmp $1 natpmp
+    config_get natpmpext $1 natpmpext
+    config_get upnpudp $1 upnpudp
+    config_get upnptcp $1 upnptcp
+    
+    config_get aftripv6 $1 aftripv6
+    config_get wanipv6 $1 wanipv6
+    config_get persistent $1 persistent
+    
+    config_get lanipv4 $1 lanipv4
+    config_get wanipv4 $1 wanipv4
+    config_get aftripv4 $1 aftripv4
+    config_get laniface $1 laniface
+    config_get waniface $1 waniface
+    
+    echo "Portproxy modes: NAT-PMP=${natpmp} ext.NAT-PMP=${natpmpext} UPnP UDP=${upnpudp} TCP=${upnptcp}"
+    
+    echo "Ext. NAT-PMP params: aftripv6=${aftripv6} wanipv6=${wanipv6}"
+    echo "NAT-PMP/UPnP params: lanipv4=${lanipv4} wanipv4=${wanipv4} aftripv4=${aftripv4}"
+    echo "  laniface=${laniface} waniface=${waniface}"
+
+    if [ "$natpmp" = "1" -a "$natpmpext" = "1" ]; then
+	echo "Both NAT-PMP and extended NAT-PMP enabled. They are mutually exclusive."
+	echo "Please disable one of them."
+	exit
+    fi 
+
+    if [ "1" = "$natpmpext" ]; then
+	echo "NAT-PMP ext enabled"
+	params="${params} -b ${wanipv6} -s ${aftripv6}"
+	if [ "$persistent" == "1" ]; then
+	    params="${params} --persistent"
+	fi
+    fi 
+
+    if [ "1" = "$natpmp" -o "1" = "$upnpudp" -o "1" = "$upnptcp" ]; then
+	echo "NAT-PMP or UPnP enabled"
+	if [ "$laniface" != "" ]; then 
+	    params="${params} --lan-iface $laniface"
+	fi
+	if [ "$waniface" != "" ]; then
+	    params="${params} --wan-iface $waniface"
+	fi
+
+	if [ "$lanipv4" != "" ]; then
+	    params="${params} -l $lanipv4"
+	fi
+	if [ "$wanipv4" != "" ]; then
+	    params="${params} -w $wanipv4"
+	fi
+	if [ "$aftripv4" != "" ]; then
+	    params="${params} -a $aftripv4"
+	fi
+    fi 
+
+    echo "Executing $PORTPROXY $params"
+
+    $PORTPROXY $params
+
+    result=$?
+
+    echo "Execution status $result"
+    return $result
+}
+
+start() {
+    config_load softwire
+    config_foreach portproxy portproxy
+}
+
+stop() {
+    killall portproxy
+}
