@@ -1,0 +1,12 @@
+ Portproxy
+-----------
+
+Portproxy is a NAT-PMP and UPnP proxy that allows clients located in one network
+(usually LAN) to communicate with NAT-PMP servers and Internet Gateway Devices
+(a "server" that supports UPnP) that are located in different networks.
+
+This software is expected to be typically used on a CPE device type.
+
+Published under GNU GPLv2 license.
+
+Author: Tomek Mrugalski <thomson(at)klub(dot)com(dot)pl>
