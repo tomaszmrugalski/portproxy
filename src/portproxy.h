@@ -108,7 +108,7 @@ typedef struct Context_t
 } context_t;
 
 extern context_t *ctx;
-extern const struct in_addr mcast;
+extern struct in_addr mcast;
 
 void Log(int level, const char* format, ... );
 void LogLevel(int level);

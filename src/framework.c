@@ -15,7 +15,7 @@
 int log_level = 1;
 volatile int Shutdown = 0;
 
-const struct in_addr mcast = {4211081199u}; /* 239.255.255.250 */
+struct in_addr mcast; 
 
 void signal_handler(int n) {
     Log(1, "Signal %d received. Shutting down.\n", n);
@@ -24,6 +24,8 @@ void signal_handler(int n) {
 
 int framework_init()
 {
+    mcast.s_addr = htonl(4211081199u); /* 239.255.255.250 */
+
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
     return 0;
